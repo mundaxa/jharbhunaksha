@@ -71,6 +71,21 @@
           <button class="btn-go" id="btn_go" disabled onclick="loadMap()">खोलें &#9656;</button>
         </div>
       </div>
+      <div class="panel" id="panel-plot-search" style="display:none;">
+        <div class="panel-heading">&#128270; Plot / Khata Search</div>
+        <div class="panel-body">
+          <select id="sel_search_type" style="margin-bottom:4px;">
+            <option value="plot">Plot No.</option>
+            <option value="khata">Khata No.</option>
+          </select>
+          <div style="display:flex;gap:4px;">
+            <input type="text" id="plotSearchInput" placeholder="Enter number..." style="flex:1;padding:6px 8px;border:1px solid #bbb;border-radius:3px;font-size:12px;">
+            <button class="btn-go" id="btnPlotSearch" onclick="searchPlot()" style="flex:0;padding:6px 10px;font-size:11px;">Search</button>
+            <button class="btn-go" id="btnPlotClear" onclick="clearPlotSearch()" style="flex:0;padding:6px 10px;font-size:11px;background:#888;">Clear</button>
+          </div>
+          <div id="plotSearchResults" style="margin-top:4px;font-size:11px;"></div>
+        </div>
+      </div>
       <div class="panel">
         <div class="panel-heading">Show FMB Layers</div>
         <div class="panel-body">

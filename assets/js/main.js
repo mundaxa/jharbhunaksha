@@ -94,6 +94,7 @@ function onDistrictChange() {
   document.getElementById('sel_mouza').disabled = true;
   document.getElementById('btn_go').disabled = true;
   populateCircles();
+  disablePlotSearch();
 }
 
 /* ── Selectors ── */
@@ -184,6 +185,7 @@ function loadMap() {
   currentExtent = [ex.xmin, ex.ymin, ex.xmax, ex.ymax];
   document.getElementById('plotinfo').innerHTML = '<b>'+dist.name+'</b> &rarr; '+cname+' &rarr; '+hname+' &rarr; '+mcode+' '+mname+'<br><span style=color:#888;font-size:11px>GIS: '+gisCode+'</span>';
   initMap(gisCode, currentExtent);
+  enablePlotSearch();
 }
 
 function initMap(gisCode, extent) {
@@ -305,9 +307,66 @@ function selectFromSearch(dcode, ccode, hcode, mcode) {
   enableGo();
   loadMap();
 }
+/* ── Plot Search (after map load) ── */
+var plotSearchLayer = null;
+var plotAttrMap = {
+  'plot': ['plot_no', 'PLOT_NO', 'plotno', 'PLOTNO', 'PLOT_NUMBER', 'plot_number', 'PLOTNO_', 'plot_id', 'PLOT_ID', 'Plot_No'],
+  'khata': ['khata_no', 'KHATA_NO', 'khatta_no', 'KHATTA_NO', 'khata', 'KHATA', 'KHATA_NO_', 'Khata_No', 'KHATTA']
+};
+
+function enablePlotSearch() {
+  var panel = document.getElementById('panel-plot-search');
+  if (panel) panel.style.display = 'block';
+}
+
+function disablePlotSearch() {
+  document.getElementById('panel-plot-search').style.display = 'none';
+  clearPlotSearch();
+}
+
+function searchPlot() {
+  var q = document.getElementById('plotSearchInput').value.trim();
+  if (!q || !map || !currentGisCode) return;
+  var results = document.getElementById('plotSearchResults');
+  results.innerHTML = 'Searching...';
+  var type = document.getElementById('sel_search_type').value;
+  var attrs = plotAttrMap[type] || plotAttrMap['plot'];
+  clearPlotSearch();
+  var filters = [];
+  for (var i = 0; i < attrs.length; i++) {
+    filters.push(attrs[i] + " LIKE '%" + q + "%'");
+  }
+  var cql = filters.join(' OR ');
+  plotSearchLayer = new ol.layer.Image({
+    source: new ol.source.ImageWMS({
+      url: 'https://jharbhunaksha.jharkhand.gov.in/WMS',
+      params: {
+        'LAYERS': 'OVERLAY_LAYER',
+        'TRANSPARENT': true,
+        'STATE': '20',
+        'GIS_CODE': currentGisCode,
+        'OVERLAY_CODES': overlayCodes,
+        'CQL_FILTER': cql
+      },
+      serverType: 'geoserver'
+    }),
+    opacity: 1.0
+  });
+  map.addLayer(plotSearchLayer);
+  if (currentExtent) map.getView().fit(currentExtent, {padding: [30,30,30,30]});
+  results.innerHTML = '<span style="color:#4a7a3a;">Applied. Matching plot(s) highlighted.</span>';
+}
+
+function clearPlotSearch() {
+  if (plotSearchLayer) { map.removeLayer(plotSearchLayer); plotSearchLayer = null; }
+  document.getElementById('plotSearchInput').value = '';
+  document.getElementById('plotSearchResults').innerHTML = '';
+}
+
 /* ── Init ── */
 document.getElementById('sel_dist').addEventListener('change', onDistrictChange);
 document.getElementById('sel_mouza').addEventListener('keydown', function(e){if(e.key==='Enter')loadMap();});
+document.getElementById('plotSearchInput').addEventListener('keydown', function(e){if(e.key==='Enter')searchPlot();});
 document.getElementById('sel_circle').addEventListener('change',function(){populateHalkas();populateMouzas();enableGo();});
 document.getElementById('sel_halka').addEventListener('change',function(){populateMouzas();enableGo();});
 document.getElementById('sel_mouza').addEventListener('change',enableGo);
