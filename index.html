@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BhuNaksha - Jharkhand</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="assets/css/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <button class="btn-sidebar" id="toggleSidebar" onclick="toggleSidebar()" title="Toggle Sidebar">&#9776;</button>
+  <a class="navbar-brand" href="#">BhuNaksha</a>
+  <ul class="nav">
+    <li><a href="#" onclick="showPane('home')">Home</a></li>
+    <li>
+      <a href="#">Layers &#9662;</a>
+      <ul class="dropdown-menu">
+        <li><a href="#" onclick="showPane('layers')">Layer List</a></li>
+        <li><a href="#" onclick="showPane('custom')">Custom Layers</a></li>
+      </ul>
+    </li>
+    <li><a href="#" onclick="showPane('themes')">Themes</a></li>
+    <li><a href="#" onclick="showPane('about')">About</a></li>
+  </ul>
+  <ul class="nav" style="margin-left:auto;">
+    <li><a href="#" onclick="window.print()"><i class="fa fa-print"></i> Print</a></li>
+  </ul>
+</nav>
+
+<!-- Sidebar Tab Bar -->
+<div id="sidebar">
+  <a class="tab active" href="#" onclick="showPane('home')" title="Home">&#9776;</a>
+  <a class="tab" href="#" onclick="showPane('layers')" title="Layers">&#127793;</a>
+  <a class="tab" href="#" onclick="showPane('themes')" title="Themes">&#127912;</a>
+  <a class="tab" href="#" onclick="showPane('about')" title="About">&#8505;</a>
+</div>
+
+<!-- Pane Container -->
+<div id="pane" class="open">
+
+  <!-- Home Pane -->
+  <div id="pane-home" class="pane-content">
+    <div class="pane-header">
+      <span>Home</span>
+      <span class="close" onclick="hidePane()">&times;</span>
+    </div>
+    <div class="pane-body">
+      <div class="panel">
+        <div class="panel-heading">Location</div>
+        <div class="panel-body">
+          <label>जिला (District)</label>
+          <select id="sel_dist"><option value="">-- चुनें --</option></select>
+          <label>अंचल (Circle)</label>
+          <select id="sel_circle"><option value="">-- चुनें --</option></select>
+          <label>हल्का (Halka)</label>
+          <select id="sel_halka"><option value="">-- चुनें --</option></select>
+          <label>मौजा (Mouza)</label>
+          <select id="sel_mouza"><option value="">-- चुनें --</option></select>
+          <button class="btn-go" id="btn_go" disabled onclick="loadMap()">खोलें &#9656;</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">Show FMB Layers</div>
+        <div class="panel-body">
+          <label><input type="checkbox" id="chk_base" checked onchange="toggleLayer('v',this.checked)"> Village Map</label>
+          <label><input type="checkbox" id="chk_overlay" checked onchange="toggleLayer('o',this.checked)"> Plot Boundaries</label>
+          <label><input type="checkbox" id="chk_labels" checked onchange="toggleLayer('l',this.checked)"> Labels</label>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">Plot Info</div>
+        <div class="panel-body" id="plotinfo">&#8203;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layers Pane -->
+  <div id="pane-layers" class="pane-content">
+    <div class="pane-header">
+      <span>Layers</span>
+      <span class="close" onclick="hidePane()">&times;</span>
+    </div>
+    <div class="pane-body">
+      <div class="panel">
+        <div class="panel-heading">Available Layers</div>
+        <div class="panel-body" id="layer-list">
+          <div class="layer-item"><label><input type="checkbox" checked onchange="toggleLayer('v',this.checked)"> Village Map</label></div>
+          <div class="layer-item"><label><input type="checkbox" checked onchange="toggleLayer('o',this.checked)"> Plot Boundaries</label></div>
+          <div class="layer-item"><label><input type="checkbox" checked onchange="toggleLayer('l',this.checked)"> Labels</label></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">Opacity</div>
+        <div class="panel-body">
+          <label>Plot Boundaries: <input type="range" min="0" max="1" step="0.05" value="0.85" onchange="setOpacity('o',this.value)" style="width:100%;"></label>
+          <label>Labels: <input type="range" min="0" max="1" step="0.05" value="1.0" onchange="setOpacity('l',this.value)" style="width:100%;"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Layers Pane -->
+  <div id="pane-custom" class="pane-content">
+    <div class="pane-header">
+      <span>Custom Layers</span>
+      <span class="close" onclick="hidePane()">&times;</span>
+    </div>
+    <div class="pane-body">
+      <div class="panel">
+        <div class="panel-heading">Derived Layers</div>
+        <div class="panel-body" id="derived-layer-list">
+          <p style="color:#888;font-style:italic;">No custom layers available.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Themes Pane -->
+  <div id="pane-themes" class="pane-content">
+    <div class="pane-header">
+      <span>Themes</span>
+      <span class="close" onclick="hidePane()">&times;</span>
+    </div>
+    <div class="pane-body">
+      <div class="panel">
+        <div class="panel-heading">Select Theme</div>
+        <div class="panel-body">
+          <div class="theme-item active" onclick="selectTheme(this,'default')">&#9679; Default (BhuNaksha)</div>
+          <div class="theme-item" onclick="selectTheme(this,'satellite')">&#9679; Satellite</div>
+          <div class="theme-item" onclick="selectTheme(this,'hybrid')">&#9679; Hybrid</div>
+          <div class="theme-item" onclick="selectTheme(this,'light')">&#9679; Light</div>
+          <div class="theme-item" onclick="selectTheme(this,'dark')">&#9679; Dark</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Pane -->
+  <div id="pane-about" class="pane-content">
+    <div class="pane-header">
+      <span>About BhuNaksha</span>
+      <span class="close" onclick="hidePane()">&times;</span>
+    </div>
+    <div class="pane-body">
+      <div class="panel">
+        <div class="panel-heading">BhuNaksha - Jharkhand</div>
+        <div class="panel-body">
+          <p>Offline map viewer for all districts of Jharkhand.</p>
+          <p style="margin-top:8px;" id="about-coverage">Loading coverage...</p>
+          <p style="margin-top:8px;"><b>Data Source:</b> Jharbhunaksha Portal</p>
+          <p style="margin-top:8px;"><b>WMS:</b> <a href="https://jharbhunaksha.jharkhand.gov.in/WMS" target="_blank" style="color:#47a;">jharbhunaksha.jharkhand.gov.in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Map -->
+<div id="map"></div>
+
+<!-- Data -->
+<script src="assets/data/jharkhand.js"></script>
+<script src="assets/data/extents.js"></script>
+<!-- App -->
+<script src="assets/js/main.js"></script>
+</body>
+</html>

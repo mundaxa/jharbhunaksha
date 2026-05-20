@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>नवाडीह - Koderma</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:100%; height:100%; overflow:hidden; font-family:Arial,sans-serif; }
+#map { width:100%; height:100%; }
+.nav { position:fixed; top:0; left:0; right:0; z-index:1000; background:#2c2c2c; color:#ccc; padding:6px 12px; font-size:13px; display:flex; align-items:center; gap:12px; }
+.nav a { color:#8f8; text-decoration:none; }
+.nav a:hover { text-decoration:underline; }
+.controls { position:fixed; bottom:10px; left:10px; z-index:1000; background:rgba(0,0,0,0.7); color:#fff; padding:8px 12px; border-radius:4px; font-size:12px; }
+.controls label { display:block; margin:2px 0; cursor:pointer; }
+.info { position:fixed; top:36px; right:10px; z-index:1000; background:rgba(255,255,255,0.9); padding:8px 12px; border-radius:4px; font-size:12px; max-width:300px; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+@media print { .nav,.controls,.info { display:none !important; } }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.js"></script>
+</head>
+<body>
+<div class="nav"><a href="index.html">&#9776; Home</a> &raquo; Koderma &raquo; Satgawan &raquo; हल्का-06 &raquo; 135</div>
+<div class="info"><b>Koderma</b> &rarr; Satgawan &rarr; हल्का-06 &rarr; 135<br><span style="color:#888;font-size:11px">GIS: 37_26_06_135</span></div>
+<div class="controls">
+<label><input type="checkbox" checked onchange="toggleLayer('v',this.checked)"> Village Map</label>
+<label><input type="checkbox" checked onchange="toggleLayer('o',this.checked)"> Plot Boundaries</label>
+<label><input type="checkbox" checked onchange="toggleLayer('l',this.checked)"> Labels</label>
+</div>
+<div id="map"></div>
+<script>
+var layers = {};
+var overlayCodes = 'EEmPkIKlQGeUJCllUzQsgg,vM-FUjkNRaO1y-nPRNgpDA,ZLYZdWFLSISAvZpQMluHNQ,ENKdHcbBTUG3pX0_Q3wlAg,6CqGkXc8TXqcJI3xEwcwPg,-MCG6U2XTDiiK1uxY83pCg';
+var map = new ol.Map({
+  target:'map',
+  layers:[
+    new ol.layer.Image({
+      source: new ol.source.ImageWMS({url:'https://jharbhunaksha.jharkhand.gov.in/WMS',params:{'LAYERS':'VILLAGE_MAP','STATE':'20','GIS_CODE':'37_26_06_135','STYLES':'VILLAGE_MAP','CRS':''},serverType:'geoserver'})
+    }),
+    new ol.layer.Image({
+      source: new ol.source.ImageWMS({url:'https://jharbhunaksha.jharkhand.gov.in/WMS',params:{'LAYERS':'OVERLAY_LAYER','TRANSPARENT':true,'STATE':'20','GIS_CODE':'37_26_06_135','OVERLAY_CODES':overlayCodes,'CRS':''},serverType:'geoserver'}),
+      opacity:0.85
+    }),
+    new ol.layer.Image({
+      source: new ol.source.ImageWMS({url:'https://jharbhunaksha.jharkhand.gov.in/WMS',params:{'LAYERS':'VILLAGE_MAP','TRANSPARENT':true,'STATE':'20','GIS_CODE':'37_26_06_135','STYLES':'VILLAGE_MAP','CRS':''},serverType:'geoserver'}),
+      opacity:1.0
+    })
+  ],
+  view:new ol.View({zoom:4,minZoom:0,maxZoom:28})
+});
+map.getView().fit([378690.2642085998,2734531.4717238992,380243.7896147397,2735733.1276732036],{padding:[30,30,30,30]});
+map.addControl(new ol.control.ScaleLine({units:'metric'}));
+function toggleLayer(n,v){if(layers[n])layers[n].setVisible(v);}
+</script>
+</body>
+</html>
