@@ -1,7 +1,7 @@
 # BhuNaksha Jharkhand - Offline Map Viewer
 
 Jharbhunaksha portal ka offline map viewer for all 22 districts of Jharkhand.  
-**Live:** https://viqplx7q.github.io/map/
+**Live:** https://viqplx7q.github.io/bhunaksha/
 
 ## Features
 
@@ -9,7 +9,6 @@ Jharbhunaksha portal ka offline map viewer for all 22 districts of Jharkhand.
 - **WMS-based village maps** with plot boundaries, labels, and FMB overlay
 - **Hierarchical selectors**: District → Circle → Halka → Mouza
 - **Search mouza** by name or code across all districts
-- **Plot / Khata search** inside a mouza (highlights matching plots via CQL filter)
 - **Layer controls**: toggle Village Map, Plot Boundaries, Labels + opacity slider
 - **Print / Save as PDF** support
 - Works with or without internet (local CDN assets)
@@ -22,8 +21,7 @@ Jharbhunaksha portal ka offline map viewer for all 22 districts of Jharkhand.
 Open `index.html` or visit the live site →  
 Select district → circle → halka → mouza → click **खोलें**
 
-**Search mouza:** Type name/code in the search box → click result → map loads automatically  
-**Search plot:** After map loads, enter plot/khata number in the Plot Search panel → matching plot highlights on map
+**Search mouza:** Type name/code in the search box → click result → map loads automatically
 
 ### Standalone Maps
 Open `maps/index.html` → browse district/circle/halka → click mouza for direct map view
@@ -57,5 +55,4 @@ Maps rendered via **GeoServer WMS** with 6 overlay layer IDs.
 - OpenLayers 4.6.5 (local copy)
 - Vanilla JavaScript
 - WMS overlay layers for plot boundaries, khata boundaries, and labels
-- CQL_FILTER-based plot/khata search
 - Offline-first: all assets (JS, CSS, fonts, data) bundled locally
