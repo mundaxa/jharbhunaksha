@@ -1,7 +1,7 @@
 # BhuNaksha Jharkhand - Offline Map Viewer
 
 Jharbhunaksha portal ka offline map viewer for all 22 districts of Jharkhand.  
-**Live:** https://viqplx7q.github.io/bhunaksha/
+**Live:** https://viqplx7q.github.io/jharmap/
 
 ## Features
 
